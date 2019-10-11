@@ -2,6 +2,7 @@ from flask import Flask, request, flash, url_for, redirect, render_template
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy 
+from werkzeug import secure_filename
 
 
 app = Flask(__name__)
@@ -23,8 +24,9 @@ app.config['MYSQL_PASSWORD'] = 'password'
 app.config['MYSQL_DB'] = 'social'
 
 
+# Function For Singup
 
-@app.route('/user', methods = ['GET', 'POST'])
+@app.route('/signup', methods = ['GET', 'POST'])
 def signUp():
     if request.method == 'POST':
         if not request.form['fname'] or not request.form['lname'] or not request.form['email'] or not request.form['password']:
@@ -43,6 +45,8 @@ def signUp():
             flash('Record was successfully added')   
             return {'message': 'Registered Successfully'}
 
+
+# Function For Login
 
 @app.route('/login', methods = ['POST'])
 def login():
@@ -68,7 +72,8 @@ def login():
         else:
             return 'Incorrect Email!'
 
-
+# Function For  User List
+ 
 @app.route('/userList', methods = ['GET'])
 def userList():
     cur = mysql.connection.cursor()
@@ -79,16 +84,61 @@ def userList():
     return render_template('userList.html', User = found_user ) 
 
 
+# Function For Edit Profile 
+
+@app.route('/editprofile', methods = ['POST'])
+def editprofile():
+    if request.method == 'POST':
+        if not request.form['fname'] or not request.form['lname'] or not request.form['email']:
+            flash('Please enter all the fields', 'error')
+        else:
+            details = request.form
+            uid = details['uid']
+            fname = details['fname']
+            lname = details['lname']
+            email = details['email']
+            cur = mysql.connection.cursor()
+            cur.execute('UPDATE `user` SET `fname`=%s,`lname`=%s,`email`=%s WHERE `uid` =%s',[fname,lname,email,uid])
+            mysql.connection.commit()
+            cur.close()
+            flash('Record was updated successfully')   
+            return {'message': 'User Updated Successfully'}
+
+
+#  Functin For Delete User
+
+@app.route('/user', methods = ['DELETE'])
+def deleteUser():
+    details = request.form
+    uid = details['uid']
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM `user` WHERE `uid`=%s',[uid])
+    mysql.connection.commit()
+    cur.close()
+    flash('User Deleted Successfully')   
+    return {'message': 'User Deleted Successfully'}
+
+
+# Function For File Uploads
+
+@app.route('/uploader', methods = ['POST'])
+def upload_file():
+   if request.method == 'POST':
+      f = request.files['file']
+      f.save(secure_filename(f.filename))
+      return 'file uploaded successfully'
+
+# Function For Add User Template Rendering
+
 @app.route('/adduser', methods = ['GET'])
 def adduser():
     return render_template('signup.html')  
 
+# Function For Login Template Rendering
 
 @app.route('/userlogin', methods = ['GET'])
 def userLogin():
     return render_template('login.html')  
-
-
 
 if __name__ == '__main__':
     app.run(debug = True)             
