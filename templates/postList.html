@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Flask Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Post List</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>postId</th>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>Post Creator</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in Post %}
+                <tr>
+                    <td>{{ post[0] }}</td>
+                    <td>{{ post[2] }}</td>
+                    <td>{{ post[3] }}</td>
+                    <td>{{ post[7] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>
