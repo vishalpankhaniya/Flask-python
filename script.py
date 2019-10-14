@@ -182,6 +182,17 @@ def postList():
 
 
 
+@app.route('/post', methods = ['DELETE'])
+def deletePost():
+    details = request.form
+    postId = details['postId']
+    cur = mysql.connection.cursor()
+    cur.execute('DELETE FROM `post` WHERE `pid`=%s',[postId])
+    mysql.connection.commit()
+    cur.close()
+    return {'message': 'Post Deleted Successfully'}
+
+
 # Function For File Uploads
 
 @app.route('/uploader', methods = ['POST'])
