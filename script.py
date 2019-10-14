@@ -77,7 +77,6 @@ def login():
             found_user = cur.fetchone() 
             mysql.connection.commit()       
             cur.close()
-
         if found_user:
             authenticated_user = bcrypt.check_password_hash(found_user[4],password)
             if authenticated_user:
@@ -121,7 +120,7 @@ def editprofile():
             return {'message': 'User Updated Successfully'}
 
 
-#  Functin For Delete User
+#  Function For Delete User
 
 @app.route('/user', methods = ['DELETE'])
 def deleteUser():
@@ -154,6 +153,28 @@ def addPost():
             return {'message': 'Post successfully added'}
 
 
+# Function For Edit Post 
+
+@app.route('/editPost', methods = ['POST'])
+def editPost():
+    if request.method == 'POST':
+        if not request.form['userId'] or not request.form['title'] or not request.form['content']:
+            flash('Please enter all the fields', 'error')
+        else:
+            details = request.form
+            pid = details['pid']
+            userId = details['userId']
+            title = details['title']
+            content = details['content']
+            cur = mysql.connection.cursor()
+            cur.execute('UPDATE `post` SET `userId`=%s,`title`=%s,`content`=%s WHERE `pid` =%s',[userId,title,content,pid])
+            mysql.connection.commit()
+            cur.close()
+            flash('Post Updated Successfully')   
+            return {'message': 'Post Updated Successfully'}
+
+
+
 # Function for Post List Function 
 
 @app.route('/postList', methods = ['GET'])
@@ -181,6 +202,7 @@ def postList():
     return str (found_post)
 
 
+# Function For Delete Post
 
 @app.route('/post', methods = ['DELETE'])
 def deletePost():
@@ -214,5 +236,8 @@ def adduser():
 def userLogin():
     return render_template('login.html')  
 
+# Ip For Host Configration
+#  host = '192.168.1.83'
+
 if __name__ == '__main__':
-    app.run(debug = True)             
+    app.run(debug = True,)             
