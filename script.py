@@ -61,6 +61,18 @@ def signUp():
             return {'message': 'Registered Successfully'}
 
 
+# Function For Email Exists
+
+def validate_email(email):
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT * FROM user WHERE email = %s', [email])
+    found_user = cur.fetchone()
+    if found_user:
+        print('Email is already in user') 
+    else:
+        print('Email is not Registered')
+
+
 # Function For Login
 
 @app.route('/login', methods = ['POST'])
@@ -240,4 +252,4 @@ def userLogin():
 #  host = '192.168.1.83'
 
 if __name__ == '__main__':
-    app.run(debug = True,)             
+    app.run(debug = True)             
